@@ -1,23 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState } from "react";
 
 function App() {
+  const [fileData, setFileData] = useState();
+
+  const fileChangeHandler = (e) => setFileData(e.target.files[0]);
+
+  const obSubmitHandler = (e) => {
+    e.preventDefault();
+
+    const data = new FormData();
+    
+    data.append("myFile", fileData);
+
+    fetch("http://localhost:5000/upload/single", {
+      method: "POST",
+      body: data,
+    })
+      .then((res) => console.log("File sent successfully"))
+      .catch((err) => console.log(err));
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>File uploaded</h1>
+      <form onSubmit={obSubmitHandler}>
+        <input type="file" onChange={fileChangeHandler} />
+        <br />
+        <br />
+        <button>Submit file to backend</button>
+      </form>
     </div>
   );
 }
