@@ -7,11 +7,11 @@ const fs = require("fs");
 const app = express();
 app.use(cors());
 
-const localFiles = fs.readdirSync("../uploads", (err, files) => {
+const localFiles = fs.readdirSync(path.join(__dirname, "../uploads"), (err, files) => {
   // files.forEach(file => {
   //   console.log(file);
   // });
-  return {data: files};
+  return files;
 });
 
 const storage = multer.diskStorage({
