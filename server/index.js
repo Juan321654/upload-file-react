@@ -7,11 +7,11 @@ const fs = require("fs");
 const app = express();
 app.use(cors());
 
-fs.readdir("../uploads", (err, files) => {
-  console.log(files);
+const localFiles = fs.readdirSync("../uploads", (err, files) => {
   // files.forEach(file => {
   //   console.log(file);
   // });
+  return {data: files};
 });
 
 const storage = multer.diskStorage({
@@ -31,6 +31,10 @@ const storage = multer.diskStorage({
 
 // uploadStorage is the middleware which accepts a storage engine
 const uploadStorage = multer({ storage: storage });
+
+app.get("/show-files", async (req, res) => {
+  res.send(localFiles);
+});
 
 // Single file
 app.post("/upload/single", uploadStorage.single("myFile"), (req, res) => {
