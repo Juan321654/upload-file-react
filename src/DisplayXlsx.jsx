@@ -6,7 +6,7 @@ const DisplayXlsx = () => {
   const [items, setItems] = useState([]);
   const [sheetNames, setSheetNames] = useState();
   const [readFile, setReadFile] = useState();
-  const [sheetIndex, setSheetIndex] = useState(0);
+  const [sheetIndex, setSheetIndex] = useState({ idx: 0 });
 
   useEffect(() => {
     const promise = new Promise((resolve, reject) => {
@@ -18,7 +18,7 @@ const DisplayXlsx = () => {
           const bufferArray = e.target.result;
           const wb = XLSX.read(bufferArray, { type: "buffer" });
           setSheetNames(wb.SheetNames);
-          const wsname = wb.SheetNames[sheetIndex];
+          const wsname = wb.SheetNames[sheetIndex.idx];
           const ws = wb.Sheets[wsname];
           const data = XLSX.utils.sheet_to_json(ws);
           resolve(data);
@@ -35,6 +35,12 @@ const DisplayXlsx = () => {
     });
   }, [readFile, sheetIndex]);
 
+  let style = {
+    activeColor: {
+      backgroundColor: "lightgray",
+    },
+  };
+
   return (
     <div>
       <input
@@ -47,8 +53,9 @@ const DisplayXlsx = () => {
       <div>(click on the sheet to display)</div>
       {sheetNames?.map((e, idx) => (
         <div
+          style={idx === sheetIndex.idx ? style.activeColor : null}
           className="sheetName"
-          onClick={() => setSheetIndex(idx)}
+          onClick={() => setSheetIndex({ idx: idx })}
         >{`Id:${idx} - ${e}`}</div>
       ))}
       <table
