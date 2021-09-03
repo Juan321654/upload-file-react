@@ -4,6 +4,7 @@ import * as XLSX from "xlsx";
 
 const DisplayXlsx = () => {
   const [items, setItems] = useState([]);
+  const [sheetNames, setSheetNames] = useState();
 
   const readExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -14,7 +15,7 @@ const DisplayXlsx = () => {
         const bufferArray = e.target.result;
 
         const wb = XLSX.read(bufferArray, { type: "buffer" });
-
+        setSheetNames(wb.SheetNames);
         const wsname = wb.SheetNames[0];
 
         const ws = wb.Sheets[wsname];
@@ -33,6 +34,7 @@ const DisplayXlsx = () => {
       setItems(d);
     });
   };
+  
   return (
     <div>
       <input
@@ -43,6 +45,9 @@ const DisplayXlsx = () => {
         }}
       />
 
+      {sheetNames?.map((e, idx) => (
+        <div>{`Id:${idx} - ${e}`}</div>
+      ))}
       <table
         className="table table-sm table-dark table-responsive"
         style={{ maxHeight: "600px" }}
@@ -50,7 +55,7 @@ const DisplayXlsx = () => {
         <thead>
           <tr>
             {items.length > 0
-              ? Object.keys(items[0]).map((e) => <th>{e}</th>)
+              ? Object.keys(items[0]).map((e, idx) => <th key={idx}>{e}</th>)
               : null}
           </tr>
         </thead>
