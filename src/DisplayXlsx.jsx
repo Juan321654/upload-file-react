@@ -1,47 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import * as XLSX from "xlsx";
 
 const DisplayXlsx = () => {
   const [items, setItems] = useState([]);
   const [sheetNames, setSheetNames] = useState();
+  const [readFile, setReadFile] = useState();
 
-  const readExcel = (file) => {
+  useEffect(() => {
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
-      fileReader.readAsArrayBuffer(file);
+      if (readFile) {
+        fileReader.readAsArrayBuffer(readFile);
 
-      fileReader.onload = (e) => {
-        const bufferArray = e.target.result;
+        fileReader.onload = (e) => {
+          const bufferArray = e.target.result;
+          const wb = XLSX.read(bufferArray, { type: "buffer" });
+          setSheetNames(wb.SheetNames);
+          const wsname = wb.SheetNames[0];
+          const ws = wb.Sheets[wsname];
+          const data = XLSX.utils.sheet_to_json(ws);
+          resolve(data);
+        };
 
-        const wb = XLSX.read(bufferArray, { type: "buffer" });
-        setSheetNames(wb.SheetNames);
-        const wsname = wb.SheetNames[0];
-
-        const ws = wb.Sheets[wsname];
-
-        const data = XLSX.utils.sheet_to_json(ws);
-
-        resolve(data);
-      };
-
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
+        fileReader.onerror = (error) => {
+          reject(error);
+        };
+      }
     });
 
     promise.then((d) => {
       setItems(d);
     });
-  };
-  
+  }, [readFile]);
+
   return (
     <div>
       <input
         type="file"
         onChange={(e) => {
           const file = e.target.files[0];
-          readExcel(file);
+          setReadFile(file);
         }}
       />
 
