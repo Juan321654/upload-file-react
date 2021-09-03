@@ -43,7 +43,10 @@ const DisplayXlsx = () => {
         }}
       />
 
-      <table class="table container">
+      <table
+        className="table table-sm table-dark table-responsive"
+        style={{ maxHeight: "600px" }}
+      >
         <thead>
           <tr>
             {items.length > 0
