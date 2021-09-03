@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState } from "react";
+import DisplayXlsx from "./DisplayXlsx";
 
 function App() {
   const [fileData, setFileData] = useState();
@@ -29,6 +30,8 @@ function App() {
         <br />
         <button>Submit file to backend</button>
       </form>
+      <hr />
+      <DisplayXlsx />
     </div>
   );
 }
